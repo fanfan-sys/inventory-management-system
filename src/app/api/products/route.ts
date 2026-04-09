@@ -34,7 +34,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ data: products, total, page, pageSize });
   } catch (error) {
-    return NextResponse.json({ error: '获取商品失败' }, { status: 500 });
+    console.error('[API /api/products]', error);
+    return NextResponse.json({ error: '获取商品失败', detail: error instanceof Error ? error.message : '未知错误' }, { status: 500 });
   }
 }
 
@@ -61,7 +62,8 @@ export async function POST(request: NextRequest) {
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
       return NextResponse.json({ error: 'SKU已存在' }, { status: 400 });
     }
-    return NextResponse.json({ error: '创建商品失败' }, { status: 500 });
+    console.error('[API /api/products]', error);
+    return NextResponse.json({ error: '创建商品失败', detail: error instanceof Error ? error.message : '未知错误' }, { status: 500 });
   }
 }
 
@@ -88,7 +90,8 @@ export async function PUT(request: NextRequest) {
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
       return NextResponse.json({ error: 'SKU已存在' }, { status: 400 });
     }
-    return NextResponse.json({ error: '更新商品失败' }, { status: 500 });
+    console.error('[API /api/products]', error);
+    return NextResponse.json({ error: '更新商品失败', detail: error instanceof Error ? error.message : '未知错误' }, { status: 500 });
   }
 }
 
@@ -100,6 +103,7 @@ export async function DELETE(request: NextRequest) {
     await db.product.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ error: '删除商品失败' }, { status: 500 });
+    console.error('[API /api/products]', error);
+    return NextResponse.json({ error: '删除商品失败', detail: error instanceof Error ? error.message : '未知错误' }, { status: 500 });
   }
 }

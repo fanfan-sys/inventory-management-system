@@ -133,6 +133,7 @@ export async function GET() {
       recentDailyPurchases,
     });
   } catch (error) {
-    return NextResponse.json({ error: '获取仪表盘数据失败' }, { status: 500 });
+    console.error('[API /api/dashboard]', error);
+    return NextResponse.json({ error: '获取仪表盘数据失败', detail: error instanceof Error ? error.message : '未知错误' }, { status: 500 });
   }
 }

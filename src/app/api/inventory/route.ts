@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(inventoryItems);
   } catch (error) {
-    return NextResponse.json({ error: '获取库存数据失败' }, { status: 500 });
+    console.error('[API /api/inventory]', error);
+    return NextResponse.json({ error: '获取库存数据失败', detail: error instanceof Error ? error.message : '未知错误' }, { status: 500 });
   }
 }

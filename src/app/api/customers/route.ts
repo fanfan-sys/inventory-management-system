@@ -20,7 +20,8 @@ export async function GET(request: NextRequest) {
     });
     return NextResponse.json(customers);
   } catch (error) {
-    return NextResponse.json({ error: '获取客户失败' }, { status: 500 });
+    console.error('[API /api/customers]', error);
+    return NextResponse.json({ error: '获取客户失败', detail: error instanceof Error ? error.message : '未知错误' }, { status: 500 });
   }
 }
 
@@ -40,7 +41,8 @@ export async function POST(request: NextRequest) {
     });
     return NextResponse.json(customer, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: '创建客户失败' }, { status: 500 });
+    console.error('[API /api/customers]', error);
+    return NextResponse.json({ error: '创建客户失败', detail: error instanceof Error ? error.message : '未知错误' }, { status: 500 });
   }
 }
 
@@ -61,7 +63,8 @@ export async function PUT(request: NextRequest) {
     });
     return NextResponse.json(customer);
   } catch (error) {
-    return NextResponse.json({ error: '更新客户失败' }, { status: 500 });
+    console.error('[API /api/customers]', error);
+    return NextResponse.json({ error: '更新客户失败', detail: error instanceof Error ? error.message : '未知错误' }, { status: 500 });
   }
 }
 
@@ -76,6 +79,7 @@ export async function DELETE(request: NextRequest) {
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2003') {
       return NextResponse.json({ error: '该客户有关联的销售单，无法删除' }, { status: 400 });
     }
-    return NextResponse.json({ error: '删除客户失败' }, { status: 500 });
+    console.error('[API /api/customers]', error);
+    return NextResponse.json({ error: '删除客户失败', detail: error instanceof Error ? error.message : '未知错误' }, { status: 500 });
   }
 }

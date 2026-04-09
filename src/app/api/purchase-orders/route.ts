@@ -38,7 +38,8 @@ export async function GET(request: NextRequest) {
     });
     return NextResponse.json(orders);
   } catch (error) {
-    return NextResponse.json({ error: '获取进货单失败' }, { status: 500 });
+    console.error('[API /api/purchase-orders]', error);
+    return NextResponse.json({ error: '获取进货单失败', detail: error instanceof Error ? error.message : '未知错误' }, { status: 500 });
   }
 }
 
@@ -85,7 +86,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(order, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: '创建进货单失败' }, { status: 500 });
+    console.error('[API /api/purchase-orders]', error);
+    return NextResponse.json({ error: '创建进货单失败', detail: error instanceof Error ? error.message : '未知错误' }, { status: 500 });
   }
 }
 
@@ -154,7 +156,8 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json(order);
   } catch (error) {
-    return NextResponse.json({ error: '更新进货单失败' }, { status: 500 });
+    console.error('[API /api/purchase-orders]', error);
+    return NextResponse.json({ error: '更新进货单失败', detail: error instanceof Error ? error.message : '未知错误' }, { status: 500 });
   }
 }
 
@@ -182,6 +185,7 @@ export async function DELETE(request: NextRequest) {
     await db.purchaseOrder.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ error: '删除进货单失败' }, { status: 500 });
+    console.error('[API /api/purchase-orders]', error);
+    return NextResponse.json({ error: '删除进货单失败', detail: error instanceof Error ? error.message : '未知错误' }, { status: 500 });
   }
 }
