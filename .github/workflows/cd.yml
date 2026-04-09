@@ -1,0 +1,69 @@
+# 🚀 CD 流水线 - 自动部署
+# 触发条件: push 到 main/master (CI 通过后自动部署)
+name: CD - Auto Deploy
+
+on:
+  push:
+    branches: [main, master]
+  workflow_run:
+    workflows: ["CI - Lint & Build Check"]
+    types:
+      - completed
+    branches: [main, master]
+
+# 只保留一次部署
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─── 部署 ────────────────────────────────────────────────
+  deploy:
+    name: 🚀 部署到生产环境
+    runs-on: ubuntu-latest
+    # 如果由 workflow_run 触发，确保 CI 通过
+    if: |
+      (github.event_name == 'push') ||
+      (github.event_name == 'workflow_run' && github.event.conclusion == 'success')
+    environment:
+      name: production
+      url: https://inventory-management-system.vercel.app
+    steps:
+      - name: 📥 检出代码
+        uses: actions/checkout@v4
+
+      - name: 📦 安装 Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: 📦 安装依赖
+        run: bun install --frozen-lockfile
+
+      - name: 🗄️ 生成 Prisma Client
+        run: bunx prisma generate
+
+      - name: 🏗️ 构建项目
+        run: bun run build
+        env:
+          DATABASE_URL: file:./db/custom.db
+
+      - name: 📋 部署摘要
+        run: |
+          echo "========================================="
+          echo "  🚀 部署摘要"
+          echo "========================================="
+          echo "  提交者:   ${{ github.actor }}"
+          echo "  分支:     ${{ github.ref_name }}"
+          echo "  提交SHA:  ${{ github.sha }}"
+          echo "  触发方式: ${{ github.event_name }}"
+          echo "  时间:     $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "========================================="
+          echo ""
+          echo "💡 提示: 要启用自动部署到 Vercel，请在仓库设置中配置:"
+          echo "   1. 前往 https://vercel.com 导入此仓库"
+          echo "   2. 设置环境变量 DATABASE_URL"
+          echo "   3. Vercel 会自动检测 Next.js 并部署"
+          echo ""
+          echo "📋 当前部署产物大小:"
+          du -sh .next/ 2>/dev/null || echo "  (构建产物未生成)"
