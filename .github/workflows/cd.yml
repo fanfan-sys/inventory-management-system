@@ -46,7 +46,8 @@ jobs:
       - name: 🏗️ 构建项目
         run: bun run build
         env:
-          DATABASE_URL: file:./db/custom.db
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
       - name: 📋 部署摘要
         run: |
@@ -60,10 +61,9 @@ jobs:
           echo "  时间:     $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
           echo "========================================="
           echo ""
-          echo "💡 提示: 要启用自动部署到 Vercel，请在仓库设置中配置:"
-          echo "   1. 前往 https://vercel.com 导入此仓库"
-          echo "   2. 设置环境变量 DATABASE_URL"
-          echo "   3. Vercel 会自动检测 Next.js 并部署"
+          echo "💡 提示: 确保 Vercel 中已配置以下环境变量:"
+          echo "   1. DATABASE_URL - Supabase Connection Pooling URL"
+          echo "   2. DIRECT_URL - Supabase Direct Connection URL"
           echo ""
           echo "📋 当前部署产物大小:"
           du -sh .next/ 2>/dev/null || echo "  (构建产物未生成)"

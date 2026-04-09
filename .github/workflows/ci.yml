@@ -51,17 +51,14 @@ jobs:
       - name: 📦 安装依赖
         run: bun install --frozen-lockfile
 
-      - name: 🗄️ 初始化数据库
-        env:
-          DATABASE_URL: file:/tmp/ci-test.db
-        run: |
-          bunx prisma generate
-          bunx prisma db push --skip-generate
+      - name: 🗄️ 生成 Prisma Client
+        run: bunx prisma generate
 
       - name: 🏗️ 构建项目
         run: bun run build
         env:
-          DATABASE_URL: file:/tmp/ci-test.db
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
   # ─── 测试结果汇总 ────────────────────────────────────────
   ci-result:

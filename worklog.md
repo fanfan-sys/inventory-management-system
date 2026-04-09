@@ -30,3 +30,25 @@ Stage Summary:
 - All API routes tested and working (200 status codes)
 - ESLint: 0 errors, 3 warnings (expected react-hook-form watch warnings)
 - Dev server running successfully on port 3000
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: Migrate database from SQLite to Supabase (PostgreSQL)
+
+Work Log:
+- Installed `pg` package (PostgreSQL driver for Prisma)
+- Updated `prisma/schema.prisma`: changed provider from "sqlite" to "postgresql", added `directUrl` for Supabase direct connection
+- Updated `.env` with Supabase connection URL templates (DATABASE_URL for pooler, DIRECT_URL for migrations)
+- Updated `.env.example` with clear Supabase connection instructions
+- Updated `.github/workflows/ci.yml`: removed SQLite-specific db push step, uses `secrets.DATABASE_URL` and `secrets.DIRECT_URL`
+- Updated `.github/workflows/cd.yml`: uses `secrets.DATABASE_URL` and `secrets.DIRECT_URL` for build
+- Updated `Dockerfile`: removed SQLite-specific configurations, added build args for DATABASE_URL/DIRECT_URL
+- Updated `src/lib/db.ts`: query logging only in development mode
+- ESLint: 0 errors, 3 warnings (expected react-hook-form watch warnings)
+
+Stage Summary:
+- Project fully migrated from SQLite to PostgreSQL/Supabase
+- Two connection URLs configured: Pooling URL (production/Vercel) and Direct URL (migrations/seeding)
+- CI/CD updated to use GitHub Secrets for database credentials
+- User needs to: (1) get Supabase credentials, (2) configure GitHub Secrets, (3) configure Vercel env vars, (4) run prisma db push to create tables
