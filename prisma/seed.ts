@@ -1,18 +1,22 @@
-import { db } from '@/lib/db';
-import { Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
+
+// Prisma 7: 使用 adapter 连接数据库
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
+const db = new PrismaClient({ adapter })
 
 async function main() {
-  console.log('🌱 开始播种数据...');
+  console.log('🌱 开始播种数据...')
 
   // 清空现有数据
-  await db.purchaseOrderItem.deleteMany();
-  await db.salesOrderItem.deleteMany();
-  await db.purchaseOrder.deleteMany();
-  await db.salesOrder.deleteMany();
-  await db.product.deleteMany();
-  await db.category.deleteMany();
-  await db.supplier.deleteMany();
-  await db.customer.deleteMany();
+  await db.purchaseOrderItem.deleteMany()
+  await db.salesOrderItem.deleteMany()
+  await db.purchaseOrder.deleteMany()
+  await db.salesOrder.deleteMany()
+  await db.product.deleteMany()
+  await db.category.deleteMany()
+  await db.supplier.deleteMany()
+  await db.customer.deleteMany()
 
   // 创建分类
   const categories = await Promise.all([
@@ -21,7 +25,7 @@ async function main() {
     db.category.create({ data: { name: '食品饮料', description: '食品和饮料' } }),
     db.category.create({ data: { name: '服装鞋帽', description: '服装鞋帽类' } }),
     db.category.create({ data: { name: '家居日用', description: '家居生活用品' } }),
-  ]);
+  ])
 
   // 创建供应商
   const suppliers = await Promise.all([
@@ -29,7 +33,7 @@ async function main() {
     db.supplier.create({ data: { name: '广州办公用品批发', contact: '李经理', phone: '13800138002', email: 'li@office.com', address: '广州市天河区' } }),
     db.supplier.create({ data: { name: '上海食品贸易', contact: '王经理', phone: '13800138003', email: 'wang@food.com', address: '上海市浦东新区' } }),
     db.supplier.create({ data: { name: '杭州服装集团', contact: '赵经理', phone: '13800138004', email: 'zhao@clothing.com', address: '杭州市余杭区' } }),
-  ]);
+  ])
 
   // 创建客户
   const customers = await Promise.all([
@@ -37,7 +41,7 @@ async function main() {
     db.customer.create({ data: { name: '上海贸易公司', contact: '陈总', phone: '13900139002', email: 'chen@shtrade.com', address: '上海市黄浦区' } }),
     db.customer.create({ data: { name: '广州商贸集团', contact: '黄总', phone: '13900139003', email: 'huang@gztrade.com', address: '广州市越秀区' } }),
     db.customer.create({ data: { name: '深圳创新科技', contact: '周总', phone: '13900139004', email: 'zhou@szinnov.com', address: '深圳市南山区' } }),
-  ]);
+  ])
 
   // 创建商品
   const products = await Promise.all([
@@ -51,10 +55,10 @@ async function main() {
     db.product.create({ data: { name: '运动T恤', sku: 'CL-001', categoryId: categories[3].id, unit: '件', purchasePrice: 35, sellingPrice: 79, stock: 120, minStock: 15 } }),
     db.product.create({ data: { name: '洗衣液', sku: 'HM-001', categoryId: categories[4].id, unit: '瓶', purchasePrice: 12, sellingPrice: 25, stock: 5, minStock: 10 } }),
     db.product.create({ data: { name: '手机保护壳', sku: 'BT-004', categoryId: categories[0].id, unit: '个', purchasePrice: 3, sellingPrice: 15, stock: 350, minStock: 30 } }),
-  ]);
+  ])
 
   // 创建进货单
-  const po1 = await db.purchaseOrder.create({
+  await db.purchaseOrder.create({
     data: {
       orderNo: 'PO20250101100001',
       supplierId: suppliers[0].id,
@@ -73,9 +77,9 @@ async function main() {
         ],
       },
     },
-  });
+  })
 
-  const po2 = await db.purchaseOrder.create({
+  await db.purchaseOrder.create({
     data: {
       orderNo: 'PO20250115140000',
       supplierId: suppliers[1].id,
@@ -91,9 +95,9 @@ async function main() {
         ],
       },
     },
-  });
+  })
 
-  const po3 = await db.purchaseOrder.create({
+  await db.purchaseOrder.create({
     data: {
       orderNo: 'PO20250201100000',
       supplierId: suppliers[2].id,
@@ -108,9 +112,9 @@ async function main() {
         ],
       },
     },
-  });
+  })
 
-  const po4 = await db.purchaseOrder.create({
+  await db.purchaseOrder.create({
     data: {
       orderNo: 'PO20250220090000',
       supplierId: suppliers[3].id,
@@ -126,10 +130,10 @@ async function main() {
         ],
       },
     },
-  });
+  })
 
   // 创建销售单
-  const so1 = await db.salesOrder.create({
+  await db.salesOrder.create({
     data: {
       orderNo: 'SO20250110080000',
       customerId: customers[0].id,
@@ -147,9 +151,9 @@ async function main() {
         ],
       },
     },
-  });
+  })
 
-  const so2 = await db.salesOrder.create({
+  await db.salesOrder.create({
     data: {
       orderNo: 'SO20250120110000',
       customerId: customers[1].id,
@@ -165,9 +169,9 @@ async function main() {
         ],
       },
     },
-  });
+  })
 
-  const so3 = await db.salesOrder.create({
+  await db.salesOrder.create({
     data: {
       orderNo: 'SO20250205090000',
       customerId: customers[2].id,
@@ -182,9 +186,9 @@ async function main() {
         ],
       },
     },
-  });
+  })
 
-  const so4 = await db.salesOrder.create({
+  await db.salesOrder.create({
     data: {
       orderNo: 'SO20250218140000',
       customerId: customers[3].id,
@@ -201,9 +205,9 @@ async function main() {
         ],
       },
     },
-  });
+  })
 
-  const so5 = await db.salesOrder.create({
+  await db.salesOrder.create({
     data: {
       orderNo: 'SO20250225080000',
       customerId: customers[0].id,
@@ -217,22 +221,22 @@ async function main() {
         ],
       },
     },
-  });
+  })
 
-  console.log('✅ 种子数据创建完成!');
-  console.log(`  - 分类: ${categories.length} 个`);
-  console.log(`  - 商品: ${products.length} 个`);
-  console.log(`  - 供应商: ${suppliers.length} 个`);
-  console.log(`  - 客户: ${customers.length} 个`);
-  console.log(`  - 进货单: 4 个`);
-  console.log(`  - 销售单: 5 个`);
+  console.log('✅ 种子数据创建完成!')
+  console.log(`  - 分类: ${categories.length} 个`)
+  console.log(`  - 商品: ${products.length} 个`)
+  console.log(`  - 供应商: ${suppliers.length} 个`)
+  console.log(`  - 客户: ${customers.length} 个`)
+  console.log(`  - 进货单: 4 个`)
+  console.log(`  - 销售单: 5 个`)
 }
 
 main()
   .catch((e) => {
-    console.error(e);
-    process.exit(1);
+    console.error(e)
+    process.exit(1)
   })
   .finally(async () => {
-    await db.$disconnect();
-  });
+    await db.$disconnect()
+  })
