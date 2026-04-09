@@ -11,4 +11,7 @@ export default {
   datasource: {
     url: process.env.DIRECT_URL ?? '',
   },
+  migrations: {
+    seed: 'bun run ./prisma/seed.ts',
+  },
 } satisfies PrismaConfig
