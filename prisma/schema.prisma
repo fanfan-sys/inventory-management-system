@@ -1,0 +1,135 @@
+// 进销货管理系统数据库Schema
+// Inventory Management System
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 商品分类
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products Product[]
+}
+
+// 商品
+model Product {
+  id            String   @id @default(cuid())
+  name          String
+  sku           String?  @unique
+  description   String?
+  categoryId    String?
+  unit          String   @default("个")
+  purchasePrice Float
+  sellingPrice  Float
+  stock         Int      @default(0)
+  minStock      Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  category      Category?           @relation(fields: [categoryId], references: [id])
+  purchaseItems PurchaseOrderItem[]
+  salesItems    SalesOrderItem[]
+}
+
+// 供应商
+model Supplier {
+  id          String   @id @default(cuid())
+  name        String
+  contact     String?
+  phone       String?
+  email       String?
+  address     String?
+  remark      String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+}
+
+// 客户
+model Customer {
+  id          String   @id @default(cuid())
+  name        String
+  contact     String?
+  phone       String?
+  email       String?
+  address     String?
+  remark      String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  salesOrders SalesOrder[]
+}
+
+// 进货单
+model PurchaseOrder {
+  id          String   @id @default(cuid())
+  orderNo     String   @unique
+  supplierId  String
+  totalAmount Float    @default(0)
+  status      String   @default("pending")
+  remark      String?
+  orderDate   DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  supplier Supplier             @relation(fields: [supplierId], references: [id])
+  items    PurchaseOrderItem[]
+}
+
+// 进货单明细
+model PurchaseOrderItem {
+  id              String   @id @default(cuid())
+  purchaseOrderId String
+  productId       String
+  quantity        Int
+  unitPrice       Float
+  subtotal        Float
+  createdAt       DateTime @default(now())
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  product       Product       @relation(fields: [productId], references: [id])
+}
+
+// 销售单
+model SalesOrder {
+  id          String   @id @default(cuid())
+  orderNo     String   @unique
+  customerId  String
+  totalAmount Float    @default(0)
+  status      String   @default("pending")
+  remark      String?
+  orderDate   DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  customer Customer         @relation(fields: [customerId], references: [id])
+  items    SalesOrderItem[]
+}
+
+// 销售单明细
+model SalesOrderItem {
+  id            String   @id @default(cuid())
+  salesOrderId  String
+  productId     String
+  quantity      Int
+  unitPrice     Float
+  subtotal      Float
+  createdAt     DateTime @default(now())
+
+  salesOrder SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Cascade)
+  product    Product    @relation(fields: [productId], references: [id])
+}
