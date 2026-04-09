@@ -53,6 +53,9 @@ jobs:
 
       - name: 🗄️ 生成 Prisma Client
         run: bunx prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
       - name: 🏗️ 构建项目
         run: bun run build
