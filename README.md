@@ -1,5 +1,6 @@
 # 🏪 进销货管理系统
-
+## 📄页面地址
+<https://inventory-management-system-zeta-mauve.vercel.app>
 > 基于 Next.js 16 + Prisma + shadcn/ui 构建的全功能库存管理平台
 
 [![CI - Lint & Build Check](https://github.com/fanfan-sys/inventory-management-system/actions/workflows/ci.yml/badge.svg)](https://github.com/fanfan-sys/inventory-management-system/actions/workflows/ci.yml)
